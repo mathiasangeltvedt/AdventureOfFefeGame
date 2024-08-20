@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PauseScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.view</a> &gt; <span class="el_source">PauseScreen.java</span></div><h1>PauseScreen.java</h1><pre class="source lang-java linenums">package inf112.Fefe.view;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
+
+import inf112.Fefe.Main;
+import inf112.Fefe.model.GameState;
+import inf112.Fefe.model.SpriteParser;
+
+/**
+ * This class is used to draw everything in when the game is set to pause
+ */
+public class PauseScreen extends ScreenAdapter {
+
+    GameView view;
+    ViewableGameModel model;
+    SpriteBatch batch;
+    OrthographicCamera cam;
+    TextureRegion resumeButton, restartButton, menuButton;
+<span class="fc" id="L26">    Texture pauseBoard = new Texture(Gdx.files.internal(&quot;images/pause/pauseBoard.png&quot;));</span>
+<span class="fc" id="L27">    Texture pauseTitle = new Texture(Gdx.files.internal(&quot;images/pause/title.png&quot;));</span>
+<span class="fc" id="L28">    SpriteParser parser = new SpriteParser(&quot;images/pause/buttons.png&quot;);</span>
+    Rectangle resumeBounds, restartBounds, menuBounds;
+    boolean hoveringResume, hoveringRestart, hoveringMenu;
+
+    public PauseScreen(GameView view, ViewableGameModel model) {
+<span class="nc" id="L33">        this(view, model, new SpriteBatch());</span>
+<span class="nc" id="L34">    }</span>
+
+    /**
+     * This constructor is used to create a new PauseScreen whenever the game is set
+     * to pause
+     * 
+     * @param view  is the game's original view object
+     * @param model is the game's original model object
+     */
+<span class="fc" id="L43">    public PauseScreen(GameView view, ViewableGameModel model, SpriteBatch batch) {</span>
+<span class="fc" id="L44">        this.view = view;</span>
+<span class="fc" id="L45">        this.model = model;</span>
+<span class="fc" id="L46">        this.batch = batch;</span>
+<span class="fc" id="L47">    }</span>
+
+    @Override
+    public void show() {
+<span class="fc" id="L51">        cam = new OrthographicCamera(30, 30 * Main.WINDOW_HEIGHT / Main.WINDOW_WIDTH);</span>
+<span class="fc" id="L52">        cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);</span>
+<span class="fc" id="L53">        cam.update();</span>
+<span class="fc" id="L54">        batch.setProjectionMatrix(cam.combined);</span>
+<span class="fc" id="L55">        resumeBounds = new Rectangle(16, 8, 2, 2);</span>
+<span class="fc" id="L56">        restartBounds = new Rectangle(14, 8, 2, 2);</span>
+<span class="fc" id="L57">        menuBounds = new Rectangle(12, 8, 2, 2);</span>
+<span class="fc" id="L58">        render(0);</span>
+<span class="fc" id="L59">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="fc" id="L63">        batch.begin();</span>
+<span class="fc" id="L64">        Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);</span>
+<span class="fc" id="L65">        cam.unproject(touchPos);</span>
+
+<span class="fc" id="L67">        updateButtons(touchPos);</span>
+<span class="fc" id="L68">        updateButtonTexture();</span>
+<span class="fc" id="L69">        drawButtons(batch);</span>
+
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if (Gdx.input.isButtonJustPressed(0)) {</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">            if (hoveringResume) {</span>
+<span class="nc" id="L73">                model.setGameState(GameState.PLAYING);</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            } else if (hoveringRestart) {</span>
+<span class="nc" id="L75">                model.initGame();</span>
+<span class="nc" id="L76">                view.create();</span>
+<span class="nc" id="L77">                model.setGameState(GameState.PLAYING);</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">            } else if (hoveringMenu) {</span>
+<span class="nc" id="L79">                model.setGameState(GameState.MAIN_MENU);</span>
+            }
+        }
+<span class="fc" id="L82">        batch.end();</span>
+<span class="fc" id="L83">    }</span>
+
+    @Override
+    public void dispose() {
+<span class="fc" id="L87">        batch.dispose();</span>
+<span class="fc" id="L88">    }</span>
+
+    private void drawButtons(SpriteBatch batch) {
+<span class="fc" id="L91">        batch.draw(pauseTitle, menuBounds.x - 3, 12, 12, 3);</span>
+<span class="fc" id="L92">        batch.draw(pauseBoard, menuBounds.x - 2, 6, 10, 6);</span>
+<span class="fc" id="L93">        batch.draw(menuButton, menuBounds.x, menuBounds.y, menuBounds.width, menuBounds.height);</span>
+<span class="fc" id="L94">        batch.draw(restartButton, restartBounds.x, restartBounds.y, restartBounds.width, restartBounds.height);</span>
+<span class="fc" id="L95">        batch.draw(resumeButton, resumeBounds.x, resumeBounds.y, resumeBounds.width, resumeBounds.height);</span>
+<span class="fc" id="L96">    }</span>
+
+    private void updateButtons(Vector3 touchPos) {
+<span class="fc" id="L99">        hoveringResume = resumeBounds.contains(touchPos.x, touchPos.y);</span>
+<span class="fc" id="L100">        hoveringRestart = restartBounds.contains(touchPos.x, touchPos.y);</span>
+<span class="fc" id="L101">        hoveringMenu = menuBounds.contains(touchPos.x, touchPos.y);</span>
+<span class="fc" id="L102">    }</span>
+
+    private void updateButtonTexture() {
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        resumeButton = hoveringResume ? parser.getSprite(1, 2) : parser.getSprite(0, 2);</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        restartButton = hoveringRestart ? parser.getSprite(1, 1) : parser.getSprite(0, 1);</span>
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">        menuButton = hoveringMenu ? parser.getSprite(1, 0) : parser.getSprite(0, 0);</span>
+<span class="fc" id="L108">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

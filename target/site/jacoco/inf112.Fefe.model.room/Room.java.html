@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Room.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.model.room</a> &gt; <span class="el_source">Room.java</span></div><h1>Room.java</h1><pre class="source lang-java linenums">package inf112.Fefe.model.room;
+
+import com.badlogic.gdx.math.Vector2;
+
+import inf112.Fefe.model.tiles.ITile;
+import inf112.util.grid.Grid;
+
+/**
+ * This class represents a Room in the game
+ */
+public class Room extends Grid&lt;ITile&gt; implements IRoom {
+
+    private Vector2 spawnPos;
+
+    /**
+     * This is a constructor for a Room in the game
+     * 
+     * @param rows is the amount of rows/horizontal cells in the room
+     * @param cols is the amount of cols/vertical cells in the room
+     */
+    public Room(int rows, int cols) {
+<span class="fc" id="L22">        super(rows, cols);</span>
+<span class="fc" id="L23">    }</span>
+
+    @Override
+    public Vector2 getSpawnPos() {
+<span class="fc" id="L27">        return spawnPos;</span>
+    }
+
+    @Override
+    public void setSpawnPos(Vector2 spawnPos) {
+<span class="fc" id="L32">        this.spawnPos = spawnPos;</span>
+<span class="fc" id="L33">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

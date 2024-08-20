@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.model.tiles</a> &gt; <span class="el_source">Tile.java</span></div><h1>Tile.java</h1><pre class="source lang-java linenums">package inf112.Fefe.model.tiles;
+
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.ChainShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+
+import inf112.Fefe.model.contactListeners.GameSensors;
+
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+
+/**
+ * This class represents the tiles on the board
+ */
+public abstract class Tile implements ITile {
+    public static final float DIMENSION = 1;
+    protected Body body;
+    protected int row, col, offsetX, offsetY;
+    protected TextureRegion texture;
+    private Type type;
+    private boolean fixtureSensor;
+    protected Fixture fixture;
+
+    protected Tile(World world, int row, int col, int offsetX, int offsetY) {
+<span class="fc" id="L30">        this(world, row, col, offsetX, offsetY, Type.TILE, false);</span>
+<span class="fc" id="L31">    }</span>
+
+<span class="fc" id="L33">    protected Tile(World world, int row, int col, int offsetX, int offsetY, Type type, boolean fixtureSensor) {</span>
+<span class="fc" id="L34">        this.row = row;</span>
+<span class="fc" id="L35">        this.col = col;</span>
+<span class="fc" id="L36">        this.offsetX = offsetX;</span>
+<span class="fc" id="L37">        this.offsetY = offsetY;</span>
+<span class="fc" id="L38">        this.fixtureSensor = fixtureSensor;</span>
+<span class="fc" id="L39">        this.type = type;</span>
+<span class="fc" id="L40">        initBody(world);</span>
+<span class="fc" id="L41">    }</span>
+
+    @Override
+    public Body getBody() {
+<span class="fc" id="L45">        return body;</span>
+    }
+
+    protected void initBody(World world) {
+<span class="fc" id="L49">        BodyDef bd = new BodyDef();</span>
+<span class="fc" id="L50">        bd.fixedRotation = true;</span>
+<span class="fc" id="L51">        bd.type = BodyType.StaticBody;</span>
+<span class="fc" id="L52">        bd.position.set(col + DIMENSION / 2, row + DIMENSION / 2);</span>
+<span class="fc" id="L53">        body = world.createBody(bd);</span>
+
+<span class="fc" id="L55">        PolygonShape shape = new PolygonShape();</span>
+<span class="fc" id="L56">        ChainShape shape2 = new ChainShape();</span>
+<span class="fc" id="L57">        Vector2[] arr = new Vector2[] {</span>
+<span class="fc" id="L58">                new Vector2(-DIMENSION / 2, -DIMENSION / 2),</span>
+<span class="fc" id="L59">                new Vector2(DIMENSION / 2, -DIMENSION / 2),</span>
+<span class="fc" id="L60">                new Vector2(DIMENSION / 2, DIMENSION / 2),</span>
+<span class="fc" id="L61">                new Vector2(-DIMENSION / 2, DIMENSION / 2)</span>
+        };
+<span class="fc" id="L63">        shape2.createLoop(arr);</span>
+<span class="fc" id="L64">        shape.setAsBox(0.5f, 0.5f);</span>
+
+<span class="fc" id="L66">        FixtureDef fixtureDef = new FixtureDef();</span>
+<span class="fc" id="L67">        fixtureDef.shape = shape2;</span>
+<span class="fc" id="L68">        fixtureDef.density = 1.0f;</span>
+<span class="fc" id="L69">        fixtureDef.friction = 0f;</span>
+<span class="fc" id="L70">        fixtureDef.isSensor = fixtureSensor;</span>
+<span class="fc" id="L71">        fixture = body.createFixture(fixtureDef);</span>
+<span class="fc" id="L72">        fixture.setUserData(GameSensors.GROUND.sensor);</span>
+<span class="fc" id="L73">        shape.dispose();</span>
+<span class="fc" id="L74">    }</span>
+
+    @Override
+    public void initTexture(TilesetParser parser) {
+<span class="fc" id="L78">        texture = parser.parseTile(offsetX, offsetY);</span>
+<span class="fc" id="L79">    }</span>
+
+    @Override
+    public TextureRegion getTexture() {
+<span class="nc" id="L83">        return texture;</span>
+    }
+
+    @Override
+    public Type getType() {
+<span class="fc" id="L88">        return type;</span>
+    }
+
+    @Override
+    public boolean equals(Object o) {
+<span class="nc bnc" id="L93" title="All 2 branches missed.">        if (o == this)</span>
+<span class="nc" id="L94">            return true;</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (!(o instanceof Tile))</span>
+<span class="nc" id="L96">            return false;</span>
+<span class="nc" id="L97">        Tile t = (Tile) o;</span>
+<span class="nc bnc" id="L98" title="All 6 branches missed.">        return row == t.row &amp;&amp; col == t.col &amp;&amp; type == t.type;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

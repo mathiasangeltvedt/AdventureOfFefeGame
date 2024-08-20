@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.controller</a> &gt; <span class="el_source">GameController.java</span></div><h1>GameController.java</h1><pre class="source lang-java linenums">package inf112.Fefe.controller;
+
+import com.badlogic.gdx.InputAdapter;
+import inf112.Fefe.model.GameState;
+
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+
+/**
+ * This is the controller for the player. This is where everything is controlled
+ * by buttons which are activated and deactivated.
+ */
+public class GameController extends InputAdapter {
+
+    ControllableGameModel model;
+    Timer timer;
+<span class="fc" id="L17">    Key horAct = Key.NONE;</span>
+<span class="fc" id="L18">    Key verAct = Key.NONE;</span>
+<span class="fc" id="L19">    boolean kIsHeld = false;</span>
+
+    /**
+     * Is used to create a new controller for the game
+     * 
+     * @param model is the model we will use for the game
+     */
+<span class="fc" id="L26">    public GameController(ControllableGameModel model) {</span>
+<span class="fc" id="L27">        this.model = model;</span>
+<span class="fc" id="L28">        timer = new Timer(1000 / 120, this::tick);</span>
+<span class="fc" id="L29">        timer.start();</span>
+<span class="fc" id="L30">    }</span>
+
+    @Override
+    public boolean keyDown(int arg0) {
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if (model.getGameState() == GameState.PLAYING) {</span>
+
+<span class="pc bpc" id="L36" title="1 of 10 branches missed.">            switch (arg0) {</span>
+
+                case 29: // left A
+<span class="fc" id="L39">                    horAct = Key.LEFT;</span>
+<span class="fc" id="L40">                    break;</span>
+                case 32: // right D
+<span class="fc" id="L42">                    horAct = Key.RIGHT;</span>
+<span class="fc" id="L43">                    break;</span>
+                case 51: // up W
+<span class="fc" id="L45">                    verAct = Key.UP;</span>
+<span class="fc" id="L46">                    break;</span>
+                case 47: // down S
+<span class="fc" id="L48">                    verAct = Key.DOWN;</span>
+<span class="fc" id="L49">                    break;</span>
+                case 62: // jump Space
+<span class="fc" id="L51">                    model.jump();</span>
+<span class="fc" id="L52">                    break;</span>
+                case 39: // climb k
+<span class="fc" id="L54">                    kIsHeld = true;</span>
+<span class="fc" id="L55">                    break;</span>
+                case 38: // dash j
+<span class="fc" id="L57">                    model.dash(determineDashDirection());</span>
+<span class="fc" id="L58">                    break;</span>
+                case 50:
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">                    if (model.isDebug()) {</span>
+<span class="nc" id="L61">                        model.setDebug(false);</span>
+<span class="nc" id="L62">                        break;</span>
+                    }
+<span class="fc" id="L64">                    model.setDebug(true);</span>
+<span class="fc" id="L65">                    break;</span>
+                case 111:
+<span class="nc" id="L67">                    model.setGameState(GameState.PAUSE);</span>
+<span class="fc" id="L68">                    break;</span>
+            }
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        } else if (model.getGameState() == GameState.PAUSE) {</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">            switch (arg0) {</span>
+                case 111:
+<span class="nc" id="L73">                    model.setGameState(GameState.PLAYING);</span>
+            }
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        } else if (model.getGameState() == GameState.INFO) {</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            switch (arg0) {</span>
+                case 111:
+<span class="nc" id="L78">                    model.setGameState(GameState.MAIN_MENU);</span>
+            }
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        } else if (model.getGameState() == GameState.CONTROLS) {</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">            switch (arg0) {</span>
+                case 111:
+<span class="nc" id="L83">                    model.setGameState(GameState.MAIN_MENU);</span>
+            }
+        }
+<span class="fc" id="L86">        return true;</span>
+    }
+
+    private DashDir determineDashDirection() {
+<span class="fc bfc" id="L90" title="All 3 branches covered.">        switch (horAct) {</span>
+            case LEFT:
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">                if (verAct == Key.UP) {</span>
+<span class="nc" id="L93">                    return DashDir.NORTHWEST;</span>
+<span class="pc bpc" id="L94" title="1 of 2 branches missed.">                } else if (verAct == Key.DOWN) {</span>
+<span class="nc" id="L95">                    return DashDir.SOUTHWEST;</span>
+                }
+<span class="fc" id="L97">                return DashDir.WEST;</span>
+            case RIGHT:
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">                if (verAct == Key.UP) {</span>
+<span class="nc" id="L100">                    return DashDir.NORTHEAST;</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">                } else if (verAct == Key.DOWN) {</span>
+<span class="nc" id="L102">                    return DashDir.SOUTHEAST;</span>
+                }
+<span class="fc" id="L104">                return DashDir.EAST;</span>
+            default:
+<span class="fc bfc" id="L106" title="All 2 branches covered.">                if (verAct == Key.UP)</span>
+<span class="fc" id="L107">                    return DashDir.NORTH;</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">                else if (verAct == Key.DOWN)</span>
+<span class="fc" id="L109">                    return DashDir.SOUTH;</span>
+<span class="fc" id="L110">                return DashDir.NONE;</span>
+        }
+    }
+
+    @Override
+    public boolean keyUp(int arg0) {
+<span class="fc bfc" id="L116" title="All 6 branches covered.">        switch (arg0) {</span>
+            case 29: // LEFT (A)
+<span class="fc bfc" id="L118" title="All 2 branches covered.">                if (horAct == Key.LEFT)</span>
+<span class="fc" id="L119">                    horAct = Key.NONE;</span>
+                break;
+            case 32: // RIGHT (D)
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                if (horAct == Key.RIGHT)</span>
+<span class="fc" id="L123">                    horAct = Key.NONE;</span>
+                break;
+            case 51: // UP (W)
+<span class="fc bfc" id="L126" title="All 2 branches covered.">                if (verAct == Key.UP)</span>
+<span class="fc" id="L127">                    verAct = Key.NONE;</span>
+                break;
+            case 47: // DOWN(S)
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">                if (verAct == Key.DOWN)</span>
+<span class="fc" id="L131">                    verAct = Key.NONE;</span>
+                break;
+            case 39:
+<span class="fc" id="L134">                kIsHeld = false;</span>
+                break;
+        }
+<span class="fc" id="L137">        return true;</span>
+    }
+
+    private void tick(ActionEvent e) {
+        try {
+<span class="fc" id="L142">            model.setPlayerKeys(horAct, verAct);</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">            if (kIsHeld)</span>
+<span class="nc" id="L144">                model.climb();</span>
+            else
+<span class="fc" id="L146">                model.cancelClimb();</span>
+<span class="nc" id="L147">        } catch (NullPointerException err) {</span>
+            // ignore, player is not initialized yet
+<span class="fc" id="L149">        }</span>
+<span class="fc" id="L150">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

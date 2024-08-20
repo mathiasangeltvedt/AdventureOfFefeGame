@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RoomLoader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.model.room</a> &gt; <span class="el_source">RoomLoader.java</span></div><h1>RoomLoader.java</h1><pre class="source lang-java linenums">package inf112.Fefe.model.room;
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.imageio.ImageIO;
+
+import com.badlogic.gdx.physics.box2d.World;
+
+import inf112.Fefe.model.GameModel;
+import inf112.Fefe.model.tiles.TileFactory;
+import inf112.Fefe.model.tiles.TileType;
+import inf112.util.Pair;
+
+/**
+ * This class is used to load the rooms in the game
+ */
+public class RoomLoader implements IRoomLoader {
+
+<span class="fc" id="L26">    private final Map&lt;Color, TileType&gt; tileColors = new HashMap&lt;&gt;();</span>
+    private TileFactory factory;
+    private BufferedImage rooms;
+    private Map&lt;Pair&lt;Integer, Integer&gt;, Set&lt;String&gt;&gt; collected;
+
+    /**
+     * This constructor is used to create a roomLoader object to be able to load
+     * rooms whenever the player progresses through the game
+     * 
+     * @param world is the world of the game
+     */
+<span class="fc" id="L37">    public RoomLoader(World world) {</span>
+<span class="fc" id="L38">        factory = new TileFactory(world);</span>
+<span class="fc" id="L39">        this.collected = new HashMap&lt;&gt;();</span>
+        try {
+<span class="fc" id="L41">            rooms = ImageIO.read(new File(&quot;src/main/resources/images/game/map.png&quot;));</span>
+<span class="pc" id="L42">        } catch (IOException e) {</span>
+<span class="nc" id="L43">            throw new RuntimeException(e);</span>
+        }
+<span class="fc" id="L45">        tileColors.put(new Color(255, 0, 0), TileType.GROUND);</span>
+<span class="fc" id="L46">        tileColors.put(new Color(100, 100, 100), TileType.SPIKE_DOWN); // down</span>
+<span class="fc" id="L47">        tileColors.put(new Color(40, 40, 40), TileType.SPIKE_LEFT); // left</span>
+<span class="fc" id="L48">        tileColors.put(new Color(60, 60, 60), TileType.SPIKE_RIGHT); // right</span>
+<span class="fc" id="L49">        tileColors.put(new Color(1, 1, 1, 255), TileType.SPIKE_UP); // up</span>
+<span class="fc" id="L50">        tileColors.put(new Color(0, 11, 255), TileType.LOADING_ZONE);</span>
+<span class="fc" id="L51">        tileColors.put(new Color(255, 239, 0), TileType.DOUBLE_DASH);</span>
+<span class="fc" id="L52">        tileColors.put(new Color(255, 0, 255), TileType.COLLECTIBLE);</span>
+<span class="fc" id="L53">        tileColors.put(new Color(164, 116, 73), TileType.INFO);</span>
+<span class="fc" id="L54">    }</span>
+
+    @Override
+    public Room loadLevel(Pair&lt;Integer, Integer&gt; roomPos) {
+<span class="fc" id="L58">        int width = 40;</span>
+<span class="fc" id="L59">        int height = 30;</span>
+<span class="fc" id="L60">        Room room = new Room(GameModel.ROOM_ROWS, GameModel.ROOM_COLS);</span>
+        Color[][] colors;
+        try {
+<span class="fc" id="L63">            colors = getLevelPixels(</span>
+<span class="fc" id="L64">                    rooms.getSubimage(roomPos.second * width, roomPos.first * height, width, height));</span>
+<span class="fc" id="L65">        } catch (Exception e) {</span>
+<span class="fc" id="L66">            throw new IllegalArgumentException(&quot;Cannot load room, invalid roomPos&quot;);</span>
+        }
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        for (int i = 0; i &lt; room.getRows(); ++i) {</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            for (int j = 0; j &lt; room.getCols(); ++j) {</span>
+<span class="fc" id="L70">                int row = GameModel.ROOM_ROWS - i - 1;</span>
+<span class="fc" id="L71">                Color color = colors[i][j];</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">                if (color.equals(Color.decode(&quot;#0000ff&quot;))) {</span>
+<span class="nc" id="L73">                    room.setSpawnPos(null); // Spawnposition for the player</span>
+                }
+<span class="fc" id="L75">                TileType type = tileColors.get(color);</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">                if (type == null)</span>
+<span class="fc" id="L77">                    continue;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                if (type == TileType.COLLECTIBLE)</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">                    if (collected.get(roomPos) != null)</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">                        if (collected.get(roomPos).contains(String.format(&quot;%d%d&quot;, j, row)))</span>
+<span class="nc" id="L81">                            continue;</span>
+<span class="fc" id="L82">                room.setCell(row, j, factory.getNewTile(type, row, j));</span>
+            }
+        }
+<span class="fc" id="L85">        return room;</span>
+    }
+
+    @Override
+    public void addCollected(Pair&lt;Integer, Integer&gt; roomPos, Integer xPos, Integer yPos) {
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if (collected.get(roomPos) == null) {</span>
+<span class="fc" id="L91">            collected.put(roomPos, new HashSet&lt;&gt;());</span>
+        }
+<span class="fc" id="L93">        collected.get(roomPos).add(String.format(&quot;%d%d&quot;, xPos, yPos));</span>
+<span class="fc" id="L94">    }</span>
+
+    /**
+     * getLevelPixels turns colors from the designed level to actual tiles
+     * in the game.
+     * 
+     * @param level is the current level
+     *
+     * @return tiles based on the color of the pixel in map.png
+     * 
+     */
+    private static Color[][] getLevelPixels(BufferedImage level) {
+<span class="fc" id="L106">        Color[][] colors = new Color[GameModel.ROOM_ROWS][GameModel.ROOM_COLS];</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        for (int i = 0; i &lt; colors.length; ++i) {</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">            for (int j = 0; j &lt; colors[0].length; ++j) {</span>
+<span class="fc" id="L109">                int color = level.getRGB(j, i);</span>
+<span class="fc" id="L110">                int r = (color &amp; 0x00ff0000) &gt;&gt; 16;</span>
+<span class="fc" id="L111">                int g = (color &amp; 0x0000ff00) &gt;&gt; 8;</span>
+<span class="fc" id="L112">                int b = color &amp; 0x000000ff;</span>
+<span class="fc" id="L113">                colors[i][j] = new Color(r, g, b);</span>
+            }
+        }
+<span class="fc" id="L116">        return colors;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

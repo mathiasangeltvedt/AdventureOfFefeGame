@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DashDir.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.controller</a> &gt; <span class="el_source">DashDir.java</span></div><h1>DashDir.java</h1><pre class="source lang-java linenums">package inf112.Fefe.controller;
+
+/**
+ * This class contains the different directions the player can dash toward
+ */
+<span class="fc" id="L6">public enum DashDir {</span>
+
+<span class="fc" id="L8">    NORTH(90),</span>
+<span class="fc" id="L9">    SOUTH(-90),</span>
+<span class="fc" id="L10">    WEST(180),</span>
+<span class="fc" id="L11">    EAST(0),</span>
+<span class="fc" id="L12">    NORTHEAST(45),</span>
+<span class="fc" id="L13">    NORTHWEST(135),</span>
+<span class="fc" id="L14">    SOUTHEAST(-45),</span>
+<span class="fc" id="L15">    SOUTHWEST(-135),</span>
+<span class="fc" id="L16">    NONE(0);</span>
+
+    public int rotation;
+
+<span class="fc" id="L20">    private DashDir(int rotation) {</span>
+<span class="fc" id="L21">        this.rotation = rotation;</span>
+<span class="fc" id="L22">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

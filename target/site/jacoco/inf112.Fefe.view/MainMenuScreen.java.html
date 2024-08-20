@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MainMenuScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.view</a> &gt; <span class="el_source">MainMenuScreen.java</span></div><h1>MainMenuScreen.java</h1><pre class="source lang-java linenums">package inf112.Fefe.view;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
+
+import inf112.Fefe.Main;
+import inf112.Fefe.model.GameState;
+import inf112.Fefe.model.SpriteParser;
+
+/**
+ * This class is used to draw everything in the Main Menu and update the game
+ * corresponding to what the player does in the main menu
+ */
+public class MainMenuScreen extends ScreenAdapter {
+
+    GameView view;
+    ViewableGameModel model;
+    SpriteBatch batch;
+    TextureRegion startButton, infoButton, controls1Button, controls2Button, exitButton;
+    Texture background, purpleBground, title, menuBoard, mitch;
+    Rectangle startBounds, infoBounds, controls1Bounds, controls2Bounds, exitBounds;
+    boolean hoveringStart, hoveringInfo, hoveringControls, hoveringExit;
+    OrthographicCamera cam;
+<span class="fc" id="L30">    SpriteParser parser = new SpriteParser(&quot;images/menu/buttons.png&quot;);</span>
+
+    /**
+     * This constructor is used to create a new main menu screen
+     * 
+     * @param view  is the game's original view object
+     * @param model is the game's original model object
+     */
+
+    public MainMenuScreen(GameView view, ViewableGameModel model) {
+<span class="nc" id="L40">        this(view, model, new SpriteBatch());</span>
+<span class="nc" id="L41">    }</span>
+
+<span class="fc" id="L43">    public MainMenuScreen(GameView view, ViewableGameModel model, SpriteBatch batch) {</span>
+<span class="fc" id="L44">        this.view = view;</span>
+<span class="fc" id="L45">        this.model = model;</span>
+<span class="fc" id="L46">        this.batch = batch;</span>
+<span class="fc" id="L47">        background = new Texture(Gdx.files.internal(&quot;images/game/background.png&quot;));</span>
+<span class="fc" id="L48">        title = new Texture(Gdx.files.internal(&quot;images/menu/title.png&quot;));</span>
+<span class="fc" id="L49">        menuBoard = new Texture(Gdx.files.internal(&quot;images/menu/menuBoard.png&quot;));</span>
+<span class="fc" id="L50">        mitch = new Texture(Gdx.files.internal(&quot;images/menu/mitch.png&quot;));</span>
+<span class="fc" id="L51">        cam = new OrthographicCamera(30, 30 * Main.WINDOW_HEIGHT / Main.WINDOW_WIDTH);</span>
+<span class="fc" id="L52">        cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);</span>
+<span class="fc" id="L53">        cam.update();</span>
+<span class="fc" id="L54">        batch.setProjectionMatrix(cam.combined);</span>
+<span class="fc" id="L55">        startBounds = new Rectangle(12, 11.5f, 7, 2);</span>
+<span class="fc" id="L56">        infoBounds = new Rectangle(12, 9, 7, 2);</span>
+<span class="fc" id="L57">        controls1Bounds = new Rectangle(8.5f, 6.5f, 7.5f, 2);</span>
+<span class="fc" id="L58">        controls2Bounds = new Rectangle(15.5f, 6.5f, 7, 2);</span>
+<span class="fc" id="L59">        exitBounds = new Rectangle(12, 4, 7, 2);</span>
+<span class="fc" id="L60">    }</span>
+
+    @Override
+    public void show() {
+<span class="fc" id="L64">        render(0);</span>
+<span class="fc" id="L65">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="fc" id="L69">        batch.begin();</span>
+<span class="fc" id="L70">        batch.draw(background, 0, 0, cam.viewportWidth, cam.viewportHeight);</span>
+<span class="fc" id="L71">        batch.draw(menuBoard, 3.9f, 0.5f, 23, 17);</span>
+<span class="fc" id="L72">        batch.draw(title, 4.8f, 16, 21, 6);</span>
+<span class="fc" id="L73">        batch.draw(mitch, 0.5f, -0.5f, 7, 6);</span>
+<span class="fc" id="L74">        Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);</span>
+<span class="fc" id="L75">        cam.unproject(touchPos);</span>
+<span class="fc" id="L76">        updateButtons(touchPos);</span>
+<span class="fc" id="L77">        updateButtonTexture();</span>
+<span class="fc" id="L78">        drawButtons(batch);</span>
+
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (Gdx.input.isButtonJustPressed(0)) {</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">            if (hoveringStart) {</span>
+<span class="nc" id="L82">                model.initGame();</span>
+<span class="nc" id="L83">                view.create();</span>
+<span class="nc" id="L84">                model.setGameState(GameState.PLAYING);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">            } else if (hoveringInfo) {</span>
+<span class="nc" id="L86">                model.setGameState(GameState.INFO);</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">            } else if (hoveringControls) {</span>
+<span class="nc" id="L88">                model.setGameState(GameState.CONTROLS);</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">            } else if (hoveringExit) {</span>
+<span class="nc" id="L90">                Gdx.app.exit();</span>
+            }
+        }
+<span class="fc" id="L93">        batch.end();</span>
+<span class="fc" id="L94">    }</span>
+
+    @Override
+    public void dispose() {
+<span class="fc" id="L98">        batch.dispose();</span>
+<span class="fc" id="L99">    }</span>
+
+    private void drawButtons(SpriteBatch batch) {
+<span class="fc" id="L102">        batch.draw(startButton, startBounds.x, startBounds.y, startBounds.width, startBounds.height);</span>
+<span class="fc" id="L103">        batch.draw(infoButton, infoBounds.x, infoBounds.y, infoBounds.width, infoBounds.height);</span>
+<span class="fc" id="L104">        batch.draw(controls1Button, controls1Bounds.x, controls1Bounds.y, controls1Bounds.width - 0.5f,</span>
+<span class="fc" id="L105">                controls1Bounds.height);</span>
+<span class="fc" id="L106">        batch.draw(controls2Button, controls2Bounds.x + 0.5f, controls2Bounds.y, controls2Bounds.width,</span>
+<span class="fc" id="L107">                controls2Bounds.height);</span>
+<span class="fc" id="L108">        batch.draw(exitButton, exitBounds.x, exitBounds.y, exitBounds.width, exitBounds.height);</span>
+<span class="fc" id="L109">    }</span>
+
+    private void updateButtons(Vector3 touchPos) {
+<span class="fc" id="L112">        hoveringStart = startBounds.contains(touchPos.x, touchPos.y);</span>
+<span class="fc" id="L113">        hoveringInfo = infoBounds.contains(touchPos.x, touchPos.y);</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        hoveringControls = controls1Bounds.contains(touchPos.x, touchPos.y)</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">                || controls2Bounds.contains(touchPos.x, touchPos.y);</span>
+<span class="fc" id="L116">        hoveringExit = exitBounds.contains(touchPos.x, touchPos.y);</span>
+<span class="fc" id="L117">    }</span>
+
+    private void updateButtonTexture() {
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        startButton = hoveringStart ? parser.getSprite(1, 1) : parser.getSprite(1, 0);</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        infoButton = hoveringInfo ? parser.getSprite(2, 1) : parser.getSprite(2, 0);</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        controls1Button = hoveringControls ? parser.getSprite(4, 0) : parser.getSprite(3, 0);</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        controls2Button = hoveringControls ? parser.getSprite(4, 1) : parser.getSprite(3, 1);</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        exitButton = hoveringExit ? parser.getSprite(0, 1) : parser.getSprite(0, 0);</span>
+<span class="fc" id="L125">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

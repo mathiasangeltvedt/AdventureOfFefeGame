@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.model</a> &gt; <span class="el_source">GameModel.java</span></div><h1>GameModel.java</h1><pre class="source lang-java linenums">package inf112.Fefe.model;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.WorldDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonValue;
+import java.util.Queue;
+
+import inf112.Fefe.controller.ControllableGameModel;
+import inf112.Fefe.controller.DashDir;
+import inf112.Fefe.view.ViewableGameModel;
+import inf112.util.Pair;
+import inf112.util.UtilityMethods;
+import inf112.util.wave.SoundManager;
+import inf112.util.wave.SoundName;
+import inf112.Fefe.controller.Key;
+import inf112.Fefe.model.contactListeners.ChangeableGameModel;
+import inf112.Fefe.model.contactListeners.PlayerContactListener;
+import inf112.Fefe.model.player.ContactablePlayer;
+import inf112.Fefe.model.player.DashValues;
+import inf112.Fefe.model.player.ModdablePlayer;
+import inf112.Fefe.model.player.Player;
+import inf112.Fefe.model.room.IRoomLoader;
+import inf112.Fefe.model.room.Room;
+import inf112.Fefe.model.room.RoomLoader;
+import inf112.Fefe.model.tiles.ITile;
+import inf112.Fefe.model.tiles.TileFactory;
+import inf112.Fefe.model.tiles.TileType;
+import inf112.Fefe.model.tiles.Type;
+
+/**
+ * This class represents the actual model of the game, this is where all the
+ * logic is sent throughout the game
+ * This is the brain of the game, where all logic is parsed through the
+ * different classes
+ */
+<span class="fc" id="L45">public class GameModel implements ViewableGameModel, ControllableGameModel, ChangeableGameModel {</span>
+    public static final int ROOM_ROWS = 30, ROOM_COLS = 40;
+    private static final float GRAV_CONSTANT = -75f;
+    private float musicVolume, soundVolume;
+    private ModdablePlayer player;
+    private Room room;
+    private World world;
+    private GameState gameState;
+    private Pair&lt;Integer, Integer&gt; roomNum;
+    private TileFactory tileFactory;
+    private int restartCount, reloadPowerupTimer, coins, bumpTimer;
+<span class="fc" id="L56">    private boolean debugMode, shouldReload = false, hasBumped = false, wantsInfo = false;</span>
+    private SoundManager soundManager;
+    private IRoomLoader roomLoader;
+    private PlayerContactListener contactListener;
+    private JsonValue spawnPositions;
+<span class="fc" id="L61">    private Queue&lt;ITile&gt; tilesToRemove = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L62">    private Queue&lt;Pair&lt;Integer, Integer&gt;&gt; powerupsToAdd = new LinkedList&lt;&gt;();</span>
+
+    @Override
+    public void initGame() {
+<span class="fc" id="L66">        world = new World(new WorldDef(new Vector2(0, GRAV_CONSTANT), true));</span>
+<span class="fc" id="L67">        roomLoader = new RoomLoader(world);</span>
+<span class="fc" id="L68">        roomNum = new Pair&lt;Integer, Integer&gt;(2, 0);</span>
+<span class="fc" id="L69">        room = roomLoader.loadLevel(roomNum);</span>
+<span class="fc" id="L70">        player = new Player(world);</span>
+<span class="fc" id="L71">        coins = 0;</span>
+<span class="fc" id="L72">        restartCount = 0;</span>
+<span class="fc" id="L73">        tileFactory = new TileFactory(world);</span>
+<span class="fc" id="L74">        contactListener = new PlayerContactListener((ContactablePlayer) player, this);</span>
+<span class="fc" id="L75">        world.setContactListener(contactListener);</span>
+<span class="fc" id="L76">        gameState = GameState.MAIN_MENU;</span>
+<span class="fc" id="L77">        debugMode = false;</span>
+<span class="fc" id="L78">        musicVolume = 0.02f;</span>
+<span class="fc" id="L79">        soundVolume = 1f;</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (soundManager != null)</span>
+<span class="fc" id="L81">            soundManager.dispose();</span>
+<span class="fc" id="L82">        soundManager = new SoundManager();</span>
+<span class="fc" id="L83">        setMusic(gameState);</span>
+<span class="fc" id="L84">        initPlayer();</span>
+<span class="fc" id="L85">        spawnPositions = UtilityMethods.loadJson(&quot;spawnPoints.json&quot;);</span>
+<span class="fc" id="L86">    }</span>
+
+    @Override
+    public void loadingZoneHit(Vector2 hitPos) {
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (shouldReload)</span>
+<span class="fc" id="L91">            return;</span>
+<span class="fc" id="L92">        String s = String.format(&quot;%d,%d-&quot;, roomNum.first, roomNum.second);</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (UtilityMethods.almostEqual(hitPos.x, 0.5f))</span>
+<span class="nc" id="L94">            --roomNum.second;</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if (UtilityMethods.almostEqual(hitPos.x, 39.5f))</span>
+<span class="fc" id="L96">            ++roomNum.second;</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if (UtilityMethods.almostEqual(hitPos.y, 0.5f))</span>
+<span class="nc" id="L98">            ++roomNum.first;</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (UtilityMethods.almostEqual(hitPos.y, 29.5f))</span>
+<span class="nc" id="L100">            --roomNum.first;</span>
+<span class="fc" id="L101">        float[] spawnPos = spawnPositions.get(s + String.format(&quot;%d,%d&quot;, roomNum.first, roomNum.second)).asFloatArray();</span>
+<span class="fc" id="L102">        player.setSpawnPos(new Vector2(spawnPos[0], spawnPos[1]));</span>
+<span class="fc" id="L103">        shouldReload = true;</span>
+<span class="fc" id="L104">    }</span>
+
+    @Override
+    public Vector2 getPlayerPos() {
+<span class="fc" id="L108">        return player.getBody().getPosition();</span>
+    }
+
+    @Override
+    public void setPlayerKeys(Key horKey, Key verKey) {
+<span class="fc" id="L113">        player.setMovementKeys(verKey, horKey);</span>
+<span class="fc" id="L114">    }</span>
+
+    @Override
+    public void jump() {
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (player.jump(true)) {</span>
+<span class="fc" id="L119">            soundManager.playSound(SoundName.JUMP.path, false, soundVolume);</span>
+        }
+<span class="fc" id="L121">    }</span>
+
+    @Override
+    public void tick() {
+<span class="fc" id="L125">        player.tick();</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        if (--reloadPowerupTimer == 0) {</span>
+<span class="fc" id="L127">            reloadPowerUp();</span>
+        }
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if (--bumpTimer == 0) {</span>
+<span class="nc" id="L130">            hasBumped = false;</span>
+        }
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        if (player.getIsDead()) {</span>
+<span class="fc" id="L133">            player.respawn();</span>
+<span class="fc" id="L134">            ++restartCount;</span>
+        }
+<span class="fc" id="L136">        world.step(1 / 60f, 6, 3);</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if (shouldReload) {</span>
+<span class="fc" id="L138">            reload();</span>
+<span class="fc" id="L139">            shouldReload = false;</span>
+        }
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        while (!tilesToRemove.isEmpty()) {</span>
+<span class="fc" id="L142">            ITile t = tilesToRemove.poll();</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">            if (t == null)</span>
+<span class="nc" id="L144">                continue;</span>
+<span class="fc" id="L145">            int row = (int) t.getBody().getPosition().y, col = (int) t.getBody().getPosition().x;</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">            if (t.getType() == Type.POWERUP)</span>
+<span class="fc" id="L147">                powerupsToAdd.add(new Pair&lt;Integer, Integer&gt;(row, col));</span>
+<span class="fc" id="L148">            world.destroyBody(t.getBody());</span>
+<span class="fc" id="L149">            row = (int) t.getBody().getPosition().y;</span>
+<span class="fc" id="L150">            col = (int) t.getBody().getPosition().x;</span>
+<span class="fc" id="L151">            room.setCell(row, col, null);</span>
+        }
+<span class="fc" id="L153">    }</span>
+
+    @Override
+    public DashValues pixieDustTransform() {
+<span class="fc" id="L157">        return player.getDashValues();</span>
+    }
+
+    @Override
+    public TextureRegion getPlayerSprite() {
+<span class="fc" id="L162">        return player.getSprite();</span>
+    }
+
+    @Override
+    public void initPlayer() {
+<span class="fc" id="L167">        player.initSprites(coinCounter());</span>
+<span class="fc" id="L168">    }</span>
+
+    @Override
+    public Iterable&lt;Body&gt; getStaticBodies() {
+<span class="fc" id="L172">        List&lt;Body&gt; staticBodies = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L173">        Array&lt;Body&gt; bodies = new Array&lt;&gt;();</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        for (Body body : world.getBodies(bodies)) {</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            if (body.getType() == BodyType.StaticBody)</span>
+<span class="fc" id="L176">                staticBodies.add(body);</span>
+        }
+<span class="fc" id="L178">        return staticBodies;</span>
+    }
+
+    @Override
+    public GameState getGameState() {
+<span class="fc" id="L183">        return gameState;</span>
+    }
+
+    @Override
+    public void setGameState(GameState gameState) {
+<span class="fc" id="L188">        this.gameState = gameState;</span>
+<span class="fc" id="L189">        setMusic(gameState);</span>
+<span class="fc" id="L190">    }</span>
+
+    @Override
+
+    public Iterable&lt;ITile&gt; getTiles() {
+<span class="fc" id="L195">        return room;</span>
+    }
+
+    @Override
+    public int restartCounter() {
+<span class="fc" id="L200">        return restartCount;</span>
+    }
+
+    @Override
+    public int coinCounter() {
+<span class="fc" id="L205">        return coins;</span>
+    }
+
+    @Override
+    public void dash(DashDir dir) {
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        if (player.dash(dir))</span>
+<span class="fc" id="L211">            soundManager.playSound(SoundName.DASH.path, false, soundVolume);</span>
+<span class="fc" id="L212">    }</span>
+
+    @Override
+    public void climb() {
+<span class="fc" id="L216">        player.climb();</span>
+<span class="fc" id="L217">    }</span>
+
+    @Override
+    public void cancelClimb() {
+<span class="fc" id="L221">        player.cancelClimb();</span>
+<span class="fc" id="L222">    }</span>
+
+    @Override
+    public boolean isDashing() {
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        return player.getDashTick() &gt; 0;</span>
+    }
+
+    @Override
+    public void setDebug(boolean debug) {
+<span class="fc" id="L231">        debugMode = debug;</span>
+<span class="fc" id="L232">    }</span>
+
+    @Override
+    public boolean isDebug() {
+<span class="fc" id="L236">        return debugMode;</span>
+    }
+
+    @Override
+    public void playerBump() {
+<span class="nc bnc" id="L241" title="All 2 branches missed.">        if (!hasBumped)</span>
+<span class="nc" id="L242">            soundManager.playSound(SoundName.HURT.path, false, soundVolume);</span>
+<span class="nc" id="L243">        hasBumped = true;</span>
+<span class="nc" id="L244">        bumpTimer = 5;</span>
+<span class="nc" id="L245">    }</span>
+
+    private void setMusic(GameState gameState) {
+<span class="fc bfc" id="L248" title="All 3 branches covered.">        switch (gameState) {</span>
+            case PLAYING:
+<span class="fc" id="L250">                soundManager.playSound(SoundName.INGAME.path, true, musicVolume);</span>
+<span class="fc" id="L251">                break;</span>
+            case MAIN_MENU:
+<span class="fc" id="L253">                soundManager.playSound(SoundName.MENU.path, true, musicVolume);</span>
+<span class="fc" id="L254">                break;</span>
+            default:
+                break;
+        }
+<span class="fc" id="L258">    }</span>
+
+    private void reload() {
+<span class="fc" id="L261">        destroyAllStaticBodies();</span>
+<span class="fc" id="L262">        room = roomLoader.loadLevel(roomNum);</span>
+<span class="fc" id="L263">        player.respawn();</span>
+<span class="fc" id="L264">        shouldReload = false;</span>
+<span class="fc" id="L265">        powerupsToAdd.clear();</span>
+<span class="fc" id="L266">        tilesToRemove.clear();</span>
+<span class="fc" id="L267">    }</span>
+
+    private void destroyAllStaticBodies() {
+<span class="fc" id="L270">        Array&lt;Body&gt; bodies = new Array&lt;Body&gt;();</span>
+<span class="fc" id="L271">        world.getBodies(bodies);</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        for (Body bd : bodies) {</span>
+<span class="fc bfc" id="L273" title="All 2 branches covered.">            if (bd.getType() == BodyType.StaticBody)</span>
+<span class="fc" id="L274">                world.destroyBody(bd);</span>
+        }
+<span class="fc" id="L276">    }</span>
+
+    @Override
+    public void powerupHit() {
+<span class="fc" id="L280">        reloadPowerupTimer = 120;</span>
+<span class="fc" id="L281">        Vector2 pPos = player.getBody().getPosition();</span>
+<span class="fc" id="L282">        ITile closest = null;</span>
+<span class="fc bfc" id="L283" title="All 2 branches covered.">        for (ITile t : room) {</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">            if (t.getType() == Type.POWERUP) {</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">                if (closest == null) {</span>
+<span class="fc" id="L286">                    closest = t;</span>
+<span class="fc" id="L287">                    continue;</span>
+                }
+<span class="fc" id="L289">                float closestDist = pPos.dst(closest.getBody().getPosition()),</span>
+<span class="fc" id="L290">                        currDist = pPos.dst(t.getBody().getPosition());</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">                if (currDist &lt; closestDist)</span>
+<span class="fc" id="L292">                    closest = t;</span>
+            }
+        }
+<span class="pc bpc" id="L295" title="1 of 2 branches missed.">        if (!tilesToRemove.contains(closest))</span>
+<span class="fc" id="L296">            tilesToRemove.add(closest);</span>
+
+<span class="fc" id="L298">    }</span>
+
+    /**
+     * Call to retrieve the number of the room the player is currently stationed
+     * 
+     * @return a Pair of integers which is the row and col index of the current room
+     */
+    public Pair&lt;Integer, Integer&gt; getRoomNum() {
+<span class="fc" id="L306">        return roomNum;</span>
+    }
+
+    @Override
+    public void collectibleHit() {
+<span class="fc" id="L311">        Vector2 pPos = player.getBody().getPosition();</span>
+<span class="fc" id="L312">        ITile closest = null;</span>
+<span class="fc bfc" id="L313" title="All 2 branches covered.">        for (ITile t : room) {</span>
+<span class="fc bfc" id="L314" title="All 2 branches covered.">            if (t.getType() == Type.COLLECTIBLE) {</span>
+<span class="fc bfc" id="L315" title="All 2 branches covered.">                if (closest == null) {</span>
+<span class="fc" id="L316">                    closest = t;</span>
+<span class="fc" id="L317">                    continue;</span>
+                }
+<span class="fc" id="L319">                float closestDist = pPos.dst(closest.getBody().getPosition()),</span>
+<span class="fc" id="L320">                        currDist = pPos.dst(t.getBody().getPosition());</span>
+<span class="fc bfc" id="L321" title="All 2 branches covered.">                if (currDist &lt; closestDist)</span>
+<span class="fc" id="L322">                    closest = t;</span>
+            }
+        }
+<span class="pc bpc" id="L325" title="1 of 2 branches missed.">        if (!tilesToRemove.contains(closest)) {</span>
+<span class="fc" id="L326">            int xPos = (int) closest.getBody().getPosition().x;</span>
+<span class="fc" id="L327">            int yPos = (int) closest.getBody().getPosition().y;</span>
+<span class="fc" id="L328">            roomLoader.addCollected(roomNum, xPos, yPos);</span>
+<span class="fc" id="L329">            tilesToRemove.add(closest);</span>
+<span class="pc bpc" id="L330" title="3 of 4 branches missed.">            switch (++coins) {</span>
+                case 10:
+<span class="nc" id="L332">                    soundManager.playSound(SoundName.SKIN_CHANGE.path, false, soundVolume);</span>
+<span class="nc" id="L333">                    initPlayer();</span>
+<span class="nc" id="L334">                    break;</span>
+                case 50:
+<span class="nc" id="L336">                    soundManager.playSound(SoundName.SKIN_CHANGE.path, false, soundVolume);</span>
+<span class="nc" id="L337">                    initPlayer();</span>
+<span class="nc" id="L338">                    break;</span>
+                case 100:
+<span class="nc" id="L340">                    soundManager.playSound(SoundName.SKIN_CHANGE.path, false, soundVolume);</span>
+<span class="nc" id="L341">                    initPlayer();</span>
+<span class="nc" id="L342">                    break;</span>
+                default:
+<span class="fc" id="L344">                    soundManager.playSound(SoundName.COLLECT_COIN.path, false, soundVolume);</span>
+                    break;
+            }
+        }
+<span class="fc" id="L348">    }</span>
+
+    private void reloadPowerUp() {
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        while (!powerupsToAdd.isEmpty()) {</span>
+<span class="fc" id="L352">            Pair&lt;Integer, Integer&gt; toAdd = powerupsToAdd.poll();</span>
+<span class="fc" id="L353">            int row = toAdd.first, col = toAdd.second;</span>
+<span class="fc" id="L354">            room.setCell(row, col, tileFactory.getNewTile(TileType.DOUBLE_DASH, row, col));</span>
+        }
+<span class="fc" id="L356">    }</span>
+
+    @Override
+    public int getInfo() {
+<span class="nc bnc" id="L360" title="All 2 branches missed.">        if (wantsInfo) {</span>
+<span class="nc" id="L361">            return roomNum.second;</span>
+        }
+<span class="nc" id="L363">        return -1;</span>
+    }
+
+    @Override
+    public void wantsInfo(boolean wantsInfo) {
+<span class="fc" id="L368">        this.wantsInfo = wantsInfo;</span>
+<span class="fc" id="L369">    }</span>
+
+    /**
+     * 
+     * Is used to get the dash direction
+     * 
+     * @return DashDir
+     */
+    public DashDir getPlayerDashDir() {
+<span class="fc" id="L378">        return player.getDashDir();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

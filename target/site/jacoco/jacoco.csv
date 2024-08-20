@@ -1,0 +1,51 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles.powerups,Collectible,5,40,0,2,1,7,1,2,1,1
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles.powerups,DoubleDash,0,16,0,0,0,3,0,1,0,1
+syntax-sorcerercs-cool-game,inf112.util.wave,SoundManager,6,200,1,15,1,26,1,10,0,3
+syntax-sorcerercs-cool-game,inf112.util.wave,SoundName,0,67,0,0,0,12,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe,Main,33,0,0,0,8,0,2,0,2,0
+syntax-sorcerercs-cool-game,inf112.Fefe.model.player.animation,SpriteElem,0,34,0,2,0,11,0,5,0,4
+syntax-sorcerercs-cool-game,inf112.Fefe.model.player.animation,Animation,0,73,0,4,0,14,0,7,0,5
+syntax-sorcerercs-cool-game,inf112.util,Pair,3,47,3,5,1,11,3,5,0,4
+syntax-sorcerercs-cool-game,inf112.util,UtilityMethods,3,41,0,2,1,6,1,5,1,4
+syntax-sorcerercs-cool-game,inf112.util.grid,Grid,8,148,5,19,2,31,5,14,0,7
+syntax-sorcerercs-cool-game,inf112.util.grid,Cell,0,12,0,0,0,1,0,1,0,1
+syntax-sorcerercs-cool-game,inf112.Fefe.model,SpriteParser,13,55,1,7,5,18,1,5,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model,GameState,0,39,0,0,0,2,0,1,0,1
+syntax-sorcerercs-cool-game,inf112.Fefe.model,GameModel,96,728,17,56,22,155,17,54,2,31
+syntax-sorcerercs-cool-game,inf112.Fefe.model.room,Room,0,12,0,0,0,5,0,3,0,3
+syntax-sorcerercs-cool-game,inf112.Fefe.model.room,RoomLoader,31,314,5,15,4,48,4,10,0,4
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileFactory,0,30,0,0,0,9,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,InfoTile,0,16,0,0,0,3,0,1,0,1
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,LoadingZoneTile,0,108,0,0,0,23,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,SpikeUpTile,0,105,0,0,0,22,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileType.new TileType() {...},0,12,0,0,0,2,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,GroundTile,0,8,0,0,0,2,0,1,0,1
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,Type,0,21,0,0,0,4,0,1,0,1
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,Tile,35,160,10,0,7,38,7,6,2,6
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,SpikeDownTile,0,105,0,0,0,22,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TilesetParser,0,23,0,0,0,5,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileType.new TileType() {...},0,12,0,0,0,2,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileType.new TileType() {...},0,12,0,0,0,2,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileType,0,94,0,0,0,10,0,1,0,1
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileType.new TileType() {...},0,12,0,0,0,2,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileType.new TileType() {...},0,12,0,0,0,2,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileType.new TileType() {...},0,12,0,0,0,2,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileType.new TileType() {...},0,12,0,0,0,2,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,SpikeLeftTile,0,105,0,0,0,22,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileType.new TileType() {...},0,12,0,0,0,2,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,TileType.new TileType() {...},0,12,0,0,0,2,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.tiles,SpikeRightTile,0,105,0,0,0,22,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.player,DashValues,0,17,0,0,0,3,0,3,0,3
+syntax-sorcerercs-cool-game,inf112.Fefe.model.player,Player,153,895,26,67,36,194,26,51,1,23
+syntax-sorcerercs-cool-game,inf112.Fefe.controller,Key,0,33,0,0,0,6,0,1,0,1
+syntax-sorcerercs-cool-game,inf112.Fefe.controller,DashDir,0,74,0,0,0,13,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.controller,GameController,57,169,22,35,18,57,16,24,0,5
+syntax-sorcerercs-cool-game,inf112.Fefe.view,ControlsScreen,19,186,4,2,3,33,4,4,1,4
+syntax-sorcerercs-cool-game,inf112.Fefe.view,MainMenuScreen,74,394,16,8,12,56,13,7,1,7
+syntax-sorcerercs-cool-game,inf112.Fefe.view,GameView,664,0,26,0,112,0,27,0,13,0
+syntax-sorcerercs-cool-game,inf112.Fefe.view,InfoScreen,19,182,4,2,4,32,4,4,1,4
+syntax-sorcerercs-cool-game,inf112.Fefe.view,PauseScreen,55,269,10,4,10,42,8,7,1,7
+syntax-sorcerercs-cool-game,inf112.Fefe.model.contactListeners,PlayerContactListener,67,339,23,47,10,55,17,26,0,8
+syntax-sorcerercs-cool-game,inf112.Fefe.model.contactListeners,GameSensors,0,88,0,0,0,15,0,2,0,2
+syntax-sorcerercs-cool-game,inf112.Fefe.model.contactListeners,ClimbDir,0,21,0,0,0,4,0,1,0,1

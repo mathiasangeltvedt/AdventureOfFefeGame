@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayerContactListener.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.model.contactListeners</a> &gt; <span class="el_source">PlayerContactListener.java</span></div><h1>PlayerContactListener.java</h1><pre class="source lang-java linenums">package inf112.Fefe.model.contactListeners;
+
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.Manifold;
+
+import inf112.Fefe.model.player.ContactablePlayer;
+
+/**
+ * This class is used to create a ContactListener for the Player
+ * This is used to check if the player is on the ground and/or the player can
+ * climb
+ */
+public class PlayerContactListener implements ContactListener {
+    private ContactablePlayer player;
+    private ChangeableGameModel model;
+    private int body, feet, handR, handL, ground, spike, loadingZone, doubleDash, collectible, info;
+
+    /**
+     * Used to create a new ContactListener for the player
+     * 
+     * @param player is the player we want to create a new ContactListener for
+     */
+<span class="fc" id="L26">    public PlayerContactListener(ContactablePlayer player, ChangeableGameModel model) {</span>
+<span class="fc" id="L27">        this.player = player;</span>
+<span class="fc" id="L28">        this.model = model;</span>
+<span class="fc" id="L29">    }</span>
+
+    private int isSensor(Fixture f1, Fixture f2, int sensorId) {
+<span class="fc bfc" id="L32" title="All 4 branches covered.">        if (f1.isSensor() &amp;&amp; f2.isSensor())</span>
+<span class="fc" id="L33">            return 0;</span>
+<span class="pc bpc" id="L34" title="1 of 4 branches missed.">        if (f1.getUserData() != null &amp;&amp; (Integer) f1.getUserData() == sensorId)</span>
+<span class="fc" id="L35">            return 1;</span>
+<span class="pc bpc" id="L36" title="1 of 4 branches missed.">        if (f2.getUserData() != null &amp;&amp; (Integer) f2.getUserData() == sensorId)</span>
+<span class="fc" id="L37">            return 1;</span>
+<span class="fc" id="L38">        return 0;</span>
+    }
+
+    @Override
+    public void beginContact(Contact contact) {
+
+<span class="fc" id="L44">        updateContactBegin(contact);</span>
+
+        // check if player hits spikes
+<span class="pc bpc" id="L47" title="1 of 4 branches missed.">        if (spike == 1 &amp;&amp; body == 1)</span>
+<span class="fc" id="L48">            player.setIsDead(true);</span>
+
+        // check if player is grounded
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (feet &gt; 0)</span>
+<span class="fc" id="L52">            player.setIsGrounded(true);</span>
+
+        // check for contacts on left and right of player
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (handR &gt; 0) {</span>
+<span class="fc" id="L56">            player.setCanClimb(true, ClimbDir.RIGHT);</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        } else if (handL &gt; 0) {</span>
+<span class="nc" id="L58">            player.setCanClimb(true, ClimbDir.LEFT);</span>
+        }
+
+        // check if player bumps into wall while dashing
+<span class="pc bpc" id="L62" title="1 of 6 branches missed.">        if ((handR &gt; 0 || handL &gt; 0) &amp;&amp; ground == 1)</span>
+<span class="pc bpc" id="L63" title="2 of 4 branches missed.">            if (player.getBody().getLinearVelocity().x &gt; 10 || player.getBody().getLinearVelocity().x &lt; -10)</span>
+<span class="nc" id="L64">                model.playerBump();</span>
+
+        // check if player bumps into platform when dashing up or jumping
+<span class="pc bpc" id="L67" title="3 of 10 branches missed.">        if (body == 1 &amp;&amp; ground == 1 &amp;&amp; feet == 0 &amp;&amp; handR == 0 &amp;&amp; handL == 0)</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            if (player.getBody().getLinearVelocity().y &gt; 15)</span>
+<span class="nc" id="L69">                model.playerBump();</span>
+
+        // check if loading zone is hit
+<span class="pc bpc" id="L72" title="3 of 4 branches missed.">        if (loadingZone == 1 &amp;&amp; body == 1) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            if ((Integer) contact.getFixtureA().getUserData() == GameSensors.LOADING_ZONE.sensor)</span>
+<span class="nc" id="L74">                model.loadingZoneHit(contact.getFixtureA().getBody().getPosition());</span>
+            else
+<span class="nc" id="L76">                model.loadingZoneHit(contact.getFixtureB().getBody().getPosition());</span>
+        }
+
+        // check if doubledash powerup is collected
+<span class="pc bpc" id="L80" title="3 of 4 branches missed.">        if (doubleDash == 1 &amp;&amp; body == 1) {</span>
+<span class="nc" id="L81">            player.setCanDash(true);</span>
+<span class="nc" id="L82">            model.powerupHit();</span>
+        }
+
+<span class="pc bpc" id="L85" title="3 of 4 branches missed.">        if (collectible == 1 &amp;&amp; body == 1)</span>
+<span class="nc" id="L86">            model.collectibleHit();</span>
+
+<span class="fc bfc" id="L88" title="All 4 branches covered.">        if (info &gt; 0 &amp;&amp; body == 1) {</span>
+<span class="fc" id="L89">            model.wantsInfo(true);</span>
+        }
+
+<span class="fc" id="L92">    }</span>
+
+    @Override
+    public void endContact(Contact contact) {
+
+<span class="fc" id="L97">        updateContactEnd(contact);</span>
+
+        // check if feet is off the ground
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if (feet == 0)</span>
+<span class="fc" id="L101">            player.setIsGrounded(false);</span>
+
+        // check if neither side of the player is touching a wall
+<span class="fc bfc" id="L104" title="All 4 branches covered.">        if (handL == 0 &amp;&amp; handR == 0) {</span>
+<span class="fc" id="L105">            player.setCanClimb(false, ClimbDir.NONE);</span>
+<span class="fc" id="L106">            player.cancelClimb();</span>
+        }
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        if (info == 0) {</span>
+<span class="fc" id="L109">            model.wantsInfo(false);</span>
+        }
+
+<span class="fc" id="L112">    }</span>
+
+    @Override
+    public void preSolve(Contact contact, Manifold oldManifold) {
+<span class="fc" id="L116">    }</span>
+
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) {
+<span class="fc" id="L120">    }</span>
+
+    private void updateContactBegin(Contact contact) {
+<span class="fc" id="L123">        body = isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.BODY.sensor);</span>
+<span class="fc" id="L124">        feet += isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.FEET.sensor);</span>
+<span class="fc" id="L125">        handR += isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.HAND_R.sensor);</span>
+<span class="fc" id="L126">        handL += isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.HAND_L.sensor);</span>
+<span class="fc" id="L127">        ground = isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.GROUND.sensor);</span>
+<span class="fc" id="L128">        spike = isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.SPIKE.sensor);</span>
+<span class="fc" id="L129">        loadingZone = isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.LOADING_ZONE.sensor);</span>
+<span class="fc" id="L130">        doubleDash = isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.DOUBLE_DASH.sensor);</span>
+<span class="fc" id="L131">        collectible = isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.COLLECTIBLE.sensor);</span>
+<span class="fc" id="L132">        info += isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.INFO.sensor);</span>
+<span class="fc" id="L133">    }</span>
+
+    private void updateContactEnd(Contact contact) {
+<span class="fc" id="L136">        feet -= isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.FEET.sensor);</span>
+<span class="fc" id="L137">        handR -= isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.HAND_R.sensor);</span>
+<span class="fc" id="L138">        handL -= isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.HAND_L.sensor);</span>
+<span class="fc" id="L139">        info -= isSensor(contact.getFixtureA(), contact.getFixtureB(), GameSensors.INFO.sensor);</span>
+<span class="fc" id="L140">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

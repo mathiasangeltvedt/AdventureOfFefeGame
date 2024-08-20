@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpriteParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.model</a> &gt; <span class="el_source">SpriteParser.java</span></div><h1>SpriteParser.java</h1><pre class="source lang-java linenums">package inf112.Fefe.model;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+/**
+ * This class is used to get the correct sprites corresponding to what we want
+ * to draw
+ */
+public class SpriteParser {
+
+    private TextureRegion[][] frames;
+
+    /**
+     * This constructor is used to parse the correct sprite corresponding to what we
+     * want to draw
+     * 
+     * @param spriteMap is the spriteMap we want to retreive the graphics from
+     */
+<span class="fc" id="L21">    public SpriteParser(String path) {</span>
+        try {
+            int width, height;
+            Texture texture;
+<span class="fc bfc" id="L25" title="All 2 branches covered.">            if (path == &quot;images/menu/buttons.png&quot;) {</span>
+<span class="fc" id="L26">                width = 246;</span>
+<span class="fc" id="L27">                height = 61;</span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            } else if (path == &quot;images/pause/buttons.png&quot;) {</span>
+<span class="fc" id="L29">                width = 48;</span>
+<span class="fc" id="L30">                height = 42;</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">            } else if (path == &quot;images/game/numbers.png&quot;) {</span>
+<span class="nc" id="L32">                width = 10;</span>
+<span class="nc" id="L33">                height = 11;</span>
+<span class="fc bfc" id="L34" title="All 2 branches covered.">            } else if (path == &quot;images/game/pixieDustTransform.png&quot;) {</span>
+<span class="fc" id="L35">                width = 375;</span>
+<span class="fc" id="L36">                height = 355;</span>
+            }
+            // else -&gt; playerSprite dimensions
+            else {
+<span class="fc" id="L40">                width = 385;</span>
+<span class="fc" id="L41">                height = 366;</span>
+            }
+<span class="fc" id="L43">            texture = new Texture(Gdx.files.internal(path));</span>
+<span class="fc" id="L44">            frames = TextureRegion.split(texture, width, height);</span>
+<span class="nc" id="L45">        } catch (Exception e) {</span>
+<span class="nc" id="L46">            e.printStackTrace();</span>
+<span class="nc" id="L47">            throw new RuntimeException(&quot;Cannot load character sprites.&quot;);</span>
+<span class="fc" id="L48">        }</span>
+<span class="fc" id="L49">    }</span>
+
+    /**
+     * This method is used to retreive the correct sprite corresponding to what
+     * animation we want.
+     * 
+     * @param row is the row we want to retreive the animation from
+     * @param col is the col we want to retreive the animation from
+     * @return a TextureRegion which is the graphic/picture we want
+     */
+    public TextureRegion getSprite(int row, int col) {
+<span class="fc" id="L60">        return frames[row][col];</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

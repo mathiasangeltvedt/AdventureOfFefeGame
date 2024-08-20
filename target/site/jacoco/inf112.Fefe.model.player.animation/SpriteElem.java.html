@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpriteElem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.model.player.animation</a> &gt; <span class="el_source">SpriteElem.java</span></div><h1>SpriteElem.java</h1><pre class="source lang-java linenums">package inf112.Fefe.model.player.animation;
+
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+/**
+ * This class represents one Sprite element of an animation for the character
+ */
+public class SpriteElem {
+    private int cycle, tick;
+    private TextureRegion sprite;
+
+    /**
+     * This is the constructor for the Sprite element
+     * 
+     * @param cycle  is an integer which is how long the current sprite element
+     *               should be in the cycle (in other words how long this current
+     *               Texture should be visible on screen)
+     * @param sprite is the actual Texture of the sprite element
+     */
+<span class="fc" id="L20">    public SpriteElem(int cycle, TextureRegion sprite) {</span>
+<span class="fc" id="L21">        this.cycle = cycle;</span>
+<span class="fc" id="L22">        tick = cycle;</span>
+<span class="fc" id="L23">        this.sprite = sprite;</span>
+<span class="fc" id="L24">    }</span>
+
+    /**
+     * This method is used to retrieve the Sprite element
+     * 
+     * @return the Texture of the Sprite element
+     */
+    public TextureRegion getSprite() {
+<span class="fc" id="L32">        return sprite;</span>
+    }
+
+    /**
+     * This method is used to retrieve the amount of time the sprite element has
+     * left in the cycle
+     * 
+     * @return an integer which is the amount of time left in the cycle
+     */
+    public int getTick() {
+<span class="fc" id="L42">        return tick;</span>
+    }
+
+    /**
+     * This method is used to update the remaining time this texture has in it's
+     * current cycle.
+     * If the tick is 0, we want to reset it to it's initial state.
+     * 
+     * @return a boolean depending on if it is still in cycle or not (as long as it
+     *         is greater than 0)
+     */
+    public boolean tick() {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (--tick == 0) {</span>
+<span class="fc" id="L55">            tick = cycle;</span>
+<span class="fc" id="L56">            return true;</span>
+        }
+<span class="fc" id="L58">        return false;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

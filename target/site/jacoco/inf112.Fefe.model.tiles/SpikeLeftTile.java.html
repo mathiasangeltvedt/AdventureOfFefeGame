@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpikeLeftTile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.model.tiles</a> &gt; <span class="el_source">SpikeLeftTile.java</span></div><h1>SpikeLeftTile.java</h1><pre class="source lang-java linenums">package inf112.Fefe.model.tiles;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+
+import inf112.Fefe.model.contactListeners.GameSensors;
+
+import com.badlogic.gdx.physics.box2d.ChainShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.World;
+
+/**
+ * This class represents the spikes that the player can die on.
+ */
+
+public class SpikeLeftTile extends Tile {
+
+    /**
+     * This constructor is used to create a SpikeLeft tile which can kill the player
+     * 
+     * @param world is the world where we want to add the tile
+     * @param row   is the row-number of the cell where we want the tile
+     * @param col   is the col-number of the cell where we want the tile
+     */
+    public SpikeLeftTile(World world, int row, int col) {
+<span class="fc" id="L28">        super(world, row, col, 2, 8);</span>
+<span class="fc" id="L29">    }</span>
+
+    @Override
+    protected void initBody(World world) {
+<span class="fc" id="L33">        BodyDef bd = new BodyDef();</span>
+<span class="fc" id="L34">        bd.fixedRotation = true;</span>
+<span class="fc" id="L35">        bd.type = BodyType.StaticBody;</span>
+<span class="fc" id="L36">        bd.position.set(col + DIMENSION / 2, row + DIMENSION / 2);</span>
+<span class="fc" id="L37">        body = world.createBody(bd);</span>
+<span class="fc" id="L38">        ChainShape shape = new ChainShape();</span>
+<span class="fc" id="L39">        Vector2[] arr = new Vector2[] {</span>
+<span class="fc" id="L40">                new Vector2(DIMENSION / 2, -DIMENSION / 2 + 0.1f),</span>
+<span class="fc" id="L41">                new Vector2(DIMENSION / 4, -DIMENSION / 2 + 0.1f),</span>
+<span class="fc" id="L42">                new Vector2(DIMENSION / 4, DIMENSION / 2 - 0.1f),</span>
+<span class="fc" id="L43">                new Vector2(DIMENSION / 2, DIMENSION / 2 - 0.1f)</span>
+        };
+<span class="fc" id="L45">        shape.createLoop(arr);</span>
+<span class="fc" id="L46">        FixtureDef fixtureDef = new FixtureDef();</span>
+<span class="fc" id="L47">        fixtureDef.shape = shape;</span>
+<span class="fc" id="L48">        fixtureDef.density = 1.0f;</span>
+<span class="fc" id="L49">        fixtureDef.friction = 0f;</span>
+<span class="fc" id="L50">        Fixture f = body.createFixture(fixtureDef);</span>
+<span class="fc" id="L51">        f.setUserData(GameSensors.SPIKE.sensor);</span>
+<span class="fc" id="L52">        shape.dispose();</span>
+<span class="fc" id="L53">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ControlsScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.Fefe.view</a> &gt; <span class="el_source">ControlsScreen.java</span></div><h1>ControlsScreen.java</h1><pre class="source lang-java linenums">package inf112.Fefe.view;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
+
+import inf112.Fefe.Main;
+import inf112.Fefe.model.GameState;
+/**
+ * this class graphics for the control screen
+ * 
+ */
+public class ControlsScreen extends ScreenAdapter {
+    Camera cam;
+    SpriteBatch batch;
+    Texture background, overview, backButtonTextureNotHovering, backButtonTextureHovering, backButton;
+    Rectangle backButtonBounds;
+<span class="fc" id="L23">    boolean hoveringBack = false;</span>
+    ViewableGameModel model;
+    GameView view;
+
+    public ControlsScreen(GameView view, ViewableGameModel model) {
+<span class="nc" id="L28">        this(view, model, new SpriteBatch());</span>
+<span class="nc" id="L29">    }</span>
+
+<span class="fc" id="L31">    public ControlsScreen(GameView view, ViewableGameModel model, SpriteBatch batch) {</span>
+<span class="fc" id="L32">        this.view = view;</span>
+<span class="fc" id="L33">        this.model = model;</span>
+<span class="fc" id="L34">        this.batch = batch;</span>
+<span class="fc" id="L35">        this.background = new Texture(Gdx.files.internal(&quot;images/game/background.png&quot;));</span>
+<span class="fc" id="L36">        this.overview = new Texture(Gdx.files.internal(&quot;images/controls/controls.png&quot;));</span>
+<span class="fc" id="L37">        this.backButtonTextureNotHovering = new Texture(Gdx.files.internal(&quot;images/controls/backButton.png&quot;));</span>
+<span class="fc" id="L38">        this.backButtonTextureHovering = new Texture(Gdx.files.internal(&quot;images/controls/backButtonHovering.png&quot;));</span>
+<span class="fc" id="L39">    }</span>
+
+    @Override
+    public void show() {
+<span class="fc" id="L43">        cam = new OrthographicCamera(30, 30 * Main.WINDOW_HEIGHT / Main.WINDOW_WIDTH);</span>
+<span class="fc" id="L44">        cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);</span>
+<span class="fc" id="L45">        cam.update();</span>
+<span class="fc" id="L46">        batch.setProjectionMatrix(cam.combined);</span>
+<span class="fc" id="L47">        backButtonBounds = new Rectangle(0, 20, 4, 2);</span>
+<span class="fc" id="L48">        render(0);</span>
+<span class="fc" id="L49">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="fc" id="L53">        batch.begin();</span>
+<span class="fc" id="L54">        batch.draw(background, 0, 0, cam.viewportWidth, cam.viewportHeight);</span>
+<span class="fc" id="L55">        batch.draw(overview, 5, 3, 20, 15);</span>
+<span class="fc" id="L56">        Vector3 touchPos = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);</span>
+<span class="fc" id="L57">        cam.unproject(touchPos);</span>
+<span class="fc" id="L58">        hoveringBack = backButtonBounds.contains(touchPos.x, touchPos.y);</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        backButton = hoveringBack ? backButtonTextureHovering : backButtonTextureNotHovering;</span>
+<span class="fc" id="L60">        batch.draw(backButton, backButtonBounds.x, backButtonBounds.y, backButtonBounds.width, backButtonBounds.height);</span>
+<span class="pc bpc" id="L61" title="3 of 4 branches missed.">        if (hoveringBack &amp;&amp; Gdx.input.isButtonJustPressed(0))</span>
+<span class="nc" id="L62">            model.setGameState(GameState.MAIN_MENU);</span>
+<span class="fc" id="L63">        batch.end();</span>
+<span class="fc" id="L64">    }</span>
+
+    @Override
+    public void dispose() {
+<span class="fc" id="L68">        background.dispose();</span>
+<span class="fc" id="L69">        overview.dispose();</span>
+<span class="fc" id="L70">        backButtonTextureHovering.dispose();</span>
+<span class="fc" id="L71">        backButtonTextureNotHovering.dispose();</span>
+<span class="fc" id="L72">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

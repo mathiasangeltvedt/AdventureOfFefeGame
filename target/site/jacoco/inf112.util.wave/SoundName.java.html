@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SoundName.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.util.wave</a> &gt; <span class="el_source">SoundName.java</span></div><h1>SoundName.java</h1><pre class="source lang-java linenums">package inf112.util.wave;
+
+/**
+ * This is the different types of sound the game has for the different actions.
+ */
+<span class="fc" id="L6">public enum SoundName {</span>
+<span class="fc" id="L7">    DASH(&quot;dash.wav&quot;),</span>
+<span class="fc" id="L8">    HURT(&quot;hurt.wav&quot;),</span>
+<span class="fc" id="L9">    JUMP(&quot;jump.wav&quot;),</span>
+<span class="fc" id="L10">    POWERUP(&quot;powerup.wav&quot;),</span>
+<span class="fc" id="L11">    COLLECT_COIN(&quot;collectCoin.wav&quot;),</span>
+<span class="fc" id="L12">    SKIN_CHANGE(&quot;skinChange.wav&quot;),</span>
+<span class="fc" id="L13">    MENU(&quot;menuSound.mp3&quot;),</span>
+<span class="fc" id="L14">    INGAME(&quot;gameSound.mp3&quot;);</span>
+
+    public String path;
+
+<span class="fc" id="L18">    private SoundName(String path) {</span>
+<span class="fc" id="L19">        this.path = path;</span>
+<span class="fc" id="L20">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Grid.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">syntax-sorcerercs-cool-game</a> &gt; <a href="index.source.html" class="el_package">inf112.util.grid</a> &gt; <span class="el_source">Grid.java</span></div><h1>Grid.java</h1><pre class="source lang-java linenums">package inf112.util.grid;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+/**
+ * This class represents the Grid of the game
+ */
+public class Grid&lt;E&gt; implements IGrid&lt;E&gt; {
+    private int rows, cols;
+<span class="fc" id="L12">    private final E DEFAULT_VAL = null;</span>
+<span class="fc" id="L13">    private boolean mutatedSinceLast = true;</span>
+    List&lt;E&gt; iteratorArr;
+
+    // Lagrer verdiene i en 2D liste
+<span class="fc" id="L17">    private List&lt;List&lt;E&gt;&gt; grid = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L19">    public Grid(int rows, int cols) {</span>
+<span class="fc" id="L20">        this.rows = rows;</span>
+<span class="fc" id="L21">        this.cols = cols;</span>
+
+<span class="fc bfc" id="L23" title="All 2 branches covered.">        for (int i = 0; i &lt; rows; i++) {</span>
+<span class="fc" id="L24">            List&lt;E&gt; row = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">            for (int j = 0; j &lt; cols; j++) {</span>
+<span class="fc" id="L26">                row.add(DEFAULT_VAL);</span>
+            }
+<span class="fc" id="L28">            grid.add(row);</span>
+        }
+<span class="fc" id="L30">    }</span>
+
+    @Override
+    public int getRows() {
+<span class="fc" id="L34">        return rows;</span>
+    }
+
+    @Override
+    public int getCols() {
+<span class="fc" id="L39">        return cols;</span>
+    }
+
+    @Override
+    public E getCell(int row, int col) {
+<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (!onGrid(row, col))</span>
+<span class="fc" id="L45">            throw new IndexOutOfBoundsException();</span>
+<span class="fc" id="L46">        return grid.get(row).get(col);</span>
+    }
+
+    @Override
+    public void setCell(int row, int col, E val) {
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if (!onGrid(row, col))</span>
+<span class="nc" id="L52">            throw new IndexOutOfBoundsException();</span>
+<span class="fc" id="L53">        mutatedSinceLast = true;</span>
+<span class="fc" id="L54">        grid.get(row).set(col, val);</span>
+<span class="fc" id="L55">    }</span>
+
+    @Override
+    public Iterator&lt;E&gt; iterator() {
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if (!mutatedSinceLast)</span>
+<span class="nc" id="L60">            return iteratorArr.iterator();</span>
+<span class="fc" id="L61">        iteratorArr = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        for (int i = 0; i &lt; rows; i++) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            for (int j = 0; j &lt; cols; j++) {</span>
+<span class="fc" id="L64">                E val = getCell(i, j);</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                if (val != null)</span>
+<span class="fc" id="L66">                    iteratorArr.add(val);</span>
+            }
+        }
+<span class="fc" id="L69">        mutatedSinceLast = false;</span>
+<span class="fc" id="L70">        return iteratorArr.iterator();</span>
+    }
+
+    private boolean onGrid(int row, int col) {
+<span class="pc bpc" id="L74" title="3 of 8 branches missed.">        return row &gt;= 0 &amp;&amp; col &gt;= 0 &amp;&amp; row &lt; rows &amp;&amp; col &lt; cols;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
