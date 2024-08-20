@@ -1,5 +1,6 @@
 **General Info**
 Group: Mathias Angeltvedt, Felix Anthonisen, Malin Volle, Cathrine Trøen, Johanne Nerland
+Link to Norwegian version of the project with full overview of commits: https://git.app.uib.no/Felix.Anthonisen/syntax-sorcerercs-cool-game
 
 **Project Info**
 About the Game:
